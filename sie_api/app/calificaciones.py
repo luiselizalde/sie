@@ -1,0 +1,85 @@
+# -*- coding: utf-8 -*-
+__author__ = 'Luis Elizalde'
+
+from flask import request, jsonify, Blueprint
+
+from app import db
+from utils import gen_gui, ArgumentsMissing
+
+calificaciones = Blueprint('calificaciones', __name__)
+
+
+@calificaciones.route('/calificaciones', methods=['POST'])
+def creacion():
+
+	if "calificacion" not in request.json:
+		raise ArgumentsMissing()
+
+	obj = Calificacion(request.json["calificacion"])
+	created = obj.create()
+
+	return jsonify(calificacion=created), 201
+
+
+@calificaciones.route('/calificaciones/<id>', methods=['PUT'])
+def modificacion(id):
+
+	obj = Calificacion.query.get_or_404(id)
+
+	if "calificacion" not in request.json:
+		raise ArgumentsMissing()
+
+	obj.update(request.json["calificacion"])
+
+	return jsonify(respuesta="OK")
+
+
+@calificaciones.route('/calificaciones/<id>', methods=['DELETE'])
+def eliminacion(id):
+
+	obj = Calificacion.query.get_or_404(id)
+	obj.delete()
+
+	return jsonify(respuesta="OK"), 203
+
+
+
+class Calificacion(db.Model):
+
+	id = db.Column(db.String(38), primary_key=True)
+	valor = db.Column(db.String(20))
+	instrumento = db.Column(db.String(38), db.ForeignKey('instrumento.id'))
+
+
+	def __init__(self, args={}):
+		self.valor = args.get("valor")
+		self.instrumento = args.get("instrumento")
+
+	def create(self):
+
+		self.id = gen_gui()
+
+		db.session.add(self)
+		db.session.commit()
+
+		created = Calificacion.query.get(self.id)
+
+		return created
+
+	def update(self, params={}):
+
+		self.valor = params.get("valor")
+		self.instrumento = params.get("instrumento")
+
+		db.session.commit()
+
+	def delete(self):
+
+		db.session.delete(self)
+		db.session.commit()
+
+	def tojson(self):
+
+		dic = {"id":self.id, "valor":self.valor, "instrumento":self.instrumento}
+
+		return dic
