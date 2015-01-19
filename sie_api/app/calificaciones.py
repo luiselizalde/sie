@@ -52,12 +52,11 @@ class Calificacion(db.Model):
 
 
 	def __init__(self, args={}):
+		self.id = gen_gui()
 		self.valor = args.get("valor")
 		self.instrumento = args.get("instrumento")
 
 	def create(self):
-
-		self.id = gen_gui()
 
 		db.session.add(self)
 		db.session.commit()

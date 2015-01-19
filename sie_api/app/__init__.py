@@ -1,6 +1,9 @@
 #-*- coding: utf-8 -*-
 __author__ = 'Luis Elizalde'
 
+
+import logging
+
 from flask import Flask, jsonify, request
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -75,4 +78,8 @@ def ArgumentsMissing_handler(error):
 
 @app.errorhandler(Exception)
 def error_handler(error):
+
+	log = logging.getLogger("root")
+	log.error("Error al ejecutar %s %s " % (request.url_rule, request.json if request.json else "{}"), exc_info=True)
+
 	return jsonify(respuesta=str(error)), 500

@@ -55,14 +55,13 @@ class Detalle(db.Model):
 
 
 	def __init__(self, args={}):
+		self.id = gen_gui()
 		self.parametro = args.get("parametro")
 		self.calificacion = args.get("calificacion")
 		self.detalle = args.get("detalle")
 		self.instrumento = args.get("instrumento")
 
 	def create(self):
-
-		self.id = gen_gui()
 
 		db.session.add(self)
 		db.session.commit()

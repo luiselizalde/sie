@@ -13,7 +13,7 @@ nodos = Blueprint('nodos', __name__)
 def consulta_general():
 
 	padre = request.args.get("idPadre")
-	result = Nodo.query.filter_by(idPadre=padre)
+	result = Nodo.query.filter_by(idPadre=padre).all()
 
 	return jsonify(nodos=result)
 
@@ -65,12 +65,11 @@ class Nodo(db.Model):
 	idPadre = db.Column(db.String(38), db.ForeignKey('nodo.id'))
 
 	def __init__(self, args={}):
+		self.id = gen_gui()
 		self.nombre = args.get("nombre")
 		self.idPadre = args.get("idPadre")
 
 	def create(self):
-
-		self.id = gen_gui()
 
 		db.session.add(self)
 		db.session.commit()

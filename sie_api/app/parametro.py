@@ -52,13 +52,12 @@ class Parametro(db.Model):
 
 
 	def __init__(self, args={}):
+		self.id = gen_gui()
 		self.nombre = args.get("nombre")
 		self.descripcion = args.get("descripcion")
 		self.instrumento = args.get("instrumento")
 
 	def create(self):
-
-		self.id = gen_gui()
 
 		db.session.add(self)
 		db.session.commit()

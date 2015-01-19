@@ -57,13 +57,12 @@ class Profesor(db.Model):
 
 
 	def __init__(self, args={}):
+		self.id = gen_gui()
 		self.usuario = args.get("usuario")
 		self.password = args.get("contrasena")
 		self.nombre = args.get("nombre")
 
 	def create(self):
-
-		self.id = gen_gui()
 
 		db.session.add(self)
 		db.session.commit()

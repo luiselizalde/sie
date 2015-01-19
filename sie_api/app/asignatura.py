@@ -3,8 +3,12 @@ __author__ = 'Luis Elizalde'
 
 from flask import request, jsonify, Blueprint, g
 
+
 from app import db
 from utils import gen_gui, ArgumentsMissing
+
+
+from sqlalchemy import and_
 
 asignaturas = Blueprint('asignaturas', __name__)
 
@@ -15,7 +19,7 @@ def consulta_general():
 	if "nodo" not in request.args:
 		raise ArgumentsMissing()
 
-	result = Asignatura.query.filter_by(nodo=request.args["nodo"])
+	result = Asignatura.query.filter_by(nodo=request.args["nodo"]).all()
 
 	return jsonify(asignaturas=result)
 
@@ -72,17 +76,17 @@ def asignar_profesor(id):
 	return jsonify(respuesta="OK"), 201
 
 
-@asignaturas.route('/asignaturas/<id>/profesores', methods=['DELETE'])
-def quitar_profesor(id):
+@asignaturas.route('/asignaturas/<idA>/profesores/<idP>', methods=['DELETE'])
+def quitar_profesor(idP, idA):
 
-	if "profesor" not in request.json:
-		raise ArgumentsMissing()
+	res = AsignacionProfesor.query.filter_by(asignatura=idA).all()
 
-	obj = AsignacionProfesor(asignatura=id, profesor=request.json["profesor"])
-	obj.delete()
+	for r in res:
+		if r.profesor == idP:
+			r.delete()
+			return jsonify(respuesta="OK"), 203
 
-	return jsonify(respuesta="OK"), 203
-
+	return jsonify(respuesta="No encontrado"), 404
 
 
 class Asignatura(db.Model):
@@ -94,13 +98,12 @@ class Asignatura(db.Model):
 
 
 	def __init__(self, args={}):
+		self.id = gen_gui()
 		self.nombre = args.get("nombre")
 		self.nodo = args.get("nodo")
 		self.presidente = args.get("presidente")
 
 	def create(self):
-
-		self.id = gen_gui()
 
 		db.session.add(self)
 		db.session.commit()

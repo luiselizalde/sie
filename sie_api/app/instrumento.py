@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Luis Elizalde'
 
+import datetime
+
 from flask import request, jsonify, Blueprint, g
 
 from app import db
@@ -16,7 +18,7 @@ def consulta_general():
 	if "asignatura" not in request.args:
 		raise ArgumentsMissing()
 
-	result = Instrumento.query.filter_by(nodo=request.args["asignatura"])
+	result = Instrumento.query.filter_by(nodo=request.args["asignatura"]).all()
 
 	return jsonify(instrumentos=result)
 
@@ -74,18 +76,17 @@ class Instrumento(db.Model):
 
 
 	def __init__(self, args={}):
+		self.id = gen_gui()
 		self.nombre = args.get("nombre")
 		self.tipo = args.get("tipo")
 		self.asignatura = args.get("asignatura")
 		self.oficial = args.get("oficial")
 
-	def create(self):
-
-		import datetime
-
-		self.id = gen_gui()
 		self.fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 		self.creador = None #todo obtener id del profesor logueado
+
+	def create(self):
+
 
 		db.session.add(self)
 		db.session.commit()
