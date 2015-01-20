@@ -18,7 +18,7 @@ def consulta_general():
 	if "asignatura" not in request.args:
 		raise ArgumentsMissing()
 
-	result = Instrumento.query.filter_by(nodo=request.args["asignatura"]).all()
+	result = Instrumento.query.filter_by(asignatura=request.args["asignatura"]).all()
 
 	return jsonify(instrumentos=result)
 
@@ -36,7 +36,7 @@ def creacion():
 	if "instrumento" not in request.json:
 		raise ArgumentsMissing()
 
-	obj = Instrumento(request.json["instrumentos"])
+	obj = Instrumento(request.json["instrumento"])
 	created = obj.create()
 
 	return jsonify(instrumento=created), 201
@@ -82,8 +82,8 @@ class Instrumento(db.Model):
 		self.asignatura = args.get("asignatura")
 		self.oficial = args.get("oficial")
 
-		self.fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		self.creador = None #todo obtener id del profesor logueado
+		self.fecha = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+		self.creador = args.get("creador") #todo obtener id del profesor logueado
 
 	def create(self):
 
@@ -98,7 +98,7 @@ class Instrumento(db.Model):
 	def update(self, params={}):
 
 		self.nombre = params.get("nombre", self.nombre)
-		self.tipo = params.get("nombre", self.tipo)
+		self.tipo = params.get("tipo", self.tipo)
 		self.asignatura = params.get("asignatura", self.asignatura)
 		self.oficial = params.get("oficial", self.oficial)
 

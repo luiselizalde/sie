@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 __author__ = 'Luis Elizalde'
 
-
 import logging
 
 from flask import Flask, jsonify, request
@@ -40,17 +39,40 @@ app.register_blueprint(parametros)
 def hello_world():
 	return 'Hello World!'
 
+@app.route('/login', methods=['POST'])
+def login():
+	return jsonify(token=gen_gui())
+
 @app.after_request
 def after_request(response):
 
-	print "%s %s - %d " % (request.url_rule, request.json, response.status_code)
+	try:
+		response.headers["Access-Control-Allow-Origin"] = "*"
+		response.headers["Access-Control-Max-Age"] = "1000"
+		response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+		response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+
+		print "%s %s %s - %d " % (request.method, request.url, request.json, response.status_code)
+	except:
+		print "%s %s - %d " % (request.method, request.url, response.status_code)
 
 	return response
 
 @app.before_request
 def before_request():
 
-	if request.method in ['POST', 'PUT']:
+	if request.method == "OPTIONS":
+
+		response = jsonify(respuesta="OK")
+		response.status_code = 200
+		response.headers["Access-Control-Allow-Origin"] = "*"
+		response.headers["Access-Control-Max-Age"] = "1000"
+		response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+		response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+
+		return response
+
+	elif request.method in ['POST', 'PUT']:
 
 		if not request.json:
 			raise ArgumentsMissing()
