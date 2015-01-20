@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from requests.api import request
+
 __author__ = 'Luis Elizalde'
 
 import json
@@ -113,7 +115,7 @@ def test_asignaturas():
 	checkResponse(requests.post(asignacion_url, asignacion, headers=headers), "POST")
 
 	#prueba anidada
-
+	test_instrumentos()
 
 	checkResponse(requests.get(res_url))
 	checkResponse(requests.put(res_url, obj, headers=headers), "PUT")
@@ -122,6 +124,31 @@ def test_asignaturas():
 	checkResponse(requests.delete(asignacion_url), "DELETE")
 
 	checkResponse(requests.delete(res_url), "DELETE")
+
+def test_instrumentos():
+
+	res_url = base_url + "instrumentos"
+	obj = json.dumps({"instrumento" :
+		                  {"nombre" : "IE1", "tipo": 1, "asignatura":ids["asignatura"],
+		                   "oficial":True, "creador":ids["profesor"]
+		                  }})
+
+	response = checkResponse(requests.post(res_url, obj, headers=headers), "POST")
+
+	ids["instrumento"] = response["instrumento"]["id"]
+
+	checkResponse(requests.get(res_url, params={"asignatura":ids["asignatura"]}))
+
+	res_url += "/%s" % ids["instrumento"]
+
+	checkResponse(requests.put(res_url, obj, headers=headers), "PUT")
+
+	#prueba anidada
+
+	checkResponse(requests.get(res_url))
+
+	checkResponse(requests.delete(res_url), "DELETE")
+
 
 try:
 	print "limpiando..."
