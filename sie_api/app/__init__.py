@@ -50,7 +50,7 @@ def after_request(response):
 		response.headers["Access-Control-Allow-Origin"] = "*"
 		response.headers["Access-Control-Max-Age"] = "1000"
 		response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-		response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response.headers["Access-Control-Allow-Methods"] = "POST, GET, DELETE, PUT, OPTIONS"
 
 		print "%s %s %s - %d " % (request.method, request.url, request.json, response.status_code)
 	except:
@@ -68,7 +68,7 @@ def before_request():
 		response.headers["Access-Control-Allow-Origin"] = "*"
 		response.headers["Access-Control-Max-Age"] = "1000"
 		response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-		response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+		response.headers["Access-Control-Allow-Methods"] = "POST, GET, DELETE, PUT, OPTIONS"
 
 		return response
 
