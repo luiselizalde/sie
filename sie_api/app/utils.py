@@ -23,4 +23,3 @@ class CustomJSONEncoder(JSONEncoder):
 			return obj.tojson()
 		except AttributeError:
 			return JSONEncoder.default(self, obj)
-

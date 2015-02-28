@@ -5,14 +5,16 @@ import datetime
 
 from flask import request, jsonify, Blueprint, g
 
-from app import db
+from . import db
 from utils import gen_gui, ArgumentsMissing
+from permisos import permisos, USR_PUB, USR_ADMIN, USR_PROF
 
 
 instrumentos = Blueprint('instrumentos', __name__)
 
 
 @instrumentos.route('/instrumentos', methods=['GET'])
+@permisos(USR_PUB)
 def consulta_general():
 
 	if "asignatura" not in request.args:
@@ -24,6 +26,7 @@ def consulta_general():
 
 
 @instrumentos.route('/instrumentos/<id>', methods=['GET'])
+@permisos(USR_PUB)
 def consulta_detalle(id):
 
 	obj = Instrumento.query.get_or_404(id)
@@ -31,6 +34,7 @@ def consulta_detalle(id):
 	return jsonify(instrumento=obj.todjson())
 
 @instrumentos.route('/instrumentos', methods=['POST'])
+@permisos(USR_PROF)
 def creacion():
 
 	if "instrumento" not in request.json:
@@ -43,6 +47,7 @@ def creacion():
 
 
 @instrumentos.route('/instrumentos/<id>', methods=['PUT'])
+@permisos(USR_PROF)
 def modificacion(id):
 
 	obj = Instrumento.query.get_or_404(id)
@@ -56,6 +61,7 @@ def modificacion(id):
 
 
 @instrumentos.route('/instrumentos/<id>', methods=['DELETE'])
+@permisos(USR_PROF)
 def eliminacion(id):
 
 	obj = Instrumento.query.get_or_404(id)
@@ -83,7 +89,7 @@ class Instrumento(db.Model):
 		self.oficial = args.get("oficial")
 
 		self.fecha = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		self.creador = args.get("creador") #todo obtener id del profesor logueado
+		self.creador = g.session.user_id
 
 	def create(self):
 

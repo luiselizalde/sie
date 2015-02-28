@@ -4,9 +4,9 @@ __author__ = 'Luis Elizalde'
 from flask import request, jsonify, Blueprint, g
 
 
-from app import db
+from . import db
 from utils import gen_gui, ArgumentsMissing
-
+from permisos import permisos, USR_PUB, USR_ADMIN, USR_PROF
 
 from sqlalchemy import and_
 
@@ -14,6 +14,7 @@ asignaturas = Blueprint('asignaturas', __name__)
 
 
 @asignaturas.route('/asignaturas', methods=['GET'])
+@permisos(USR_PUB)
 def consulta_general():
 
 	if "nodo" not in request.args:
@@ -25,6 +26,7 @@ def consulta_general():
 
 
 @asignaturas.route('/asignaturas/<id>', methods=['GET'])
+@permisos(USR_PUB)
 def consulta_detalle(id):
 
 	obj = Asignatura.query.get_or_404(id)
@@ -32,6 +34,7 @@ def consulta_detalle(id):
 	return jsonify(asignatura=obj.todjson())
 
 @asignaturas.route('/asignaturas', methods=['POST'])
+@permisos(USR_ADMIN)
 def creacion():
 
 	if "asignatura" not in request.json:
@@ -44,6 +47,7 @@ def creacion():
 
 
 @asignaturas.route('/asignaturas/<id>', methods=['PUT'])
+@permisos(USR_ADMIN)
 def modificacion(id):
 
 	obj = Asignatura.query.get_or_404(id)
@@ -57,6 +61,7 @@ def modificacion(id):
 
 
 @asignaturas.route('/asignaturas/<id>', methods=['DELETE'])
+@permisos(USR_ADMIN)
 def eliminacion(id):
 
 	obj = Asignatura.query.get_or_404(id)
@@ -65,6 +70,7 @@ def eliminacion(id):
 	return jsonify(respuesta="OK"), 203
 
 @asignaturas.route('/asignaturas/<id>/profesores', methods=['POST'])
+@permisos(USR_ADMIN)
 def asignar_profesor(id):
 
 	if "profesor" not in request.json:
@@ -77,6 +83,7 @@ def asignar_profesor(id):
 
 
 @asignaturas.route('/asignaturas/<idA>/profesores/<idP>', methods=['DELETE'])
+@permisos(USR_ADMIN)
 def quitar_profesor(idP, idA):
 
 	res = AsignacionProfesor.query.filter_by(asignatura=idA).all()

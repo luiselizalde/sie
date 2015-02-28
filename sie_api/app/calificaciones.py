@@ -3,13 +3,15 @@ __author__ = 'Luis Elizalde'
 
 from flask import request, jsonify, Blueprint
 
-from app import db
+from . import db
 from utils import gen_gui, ArgumentsMissing
+from permisos import permisos, USR_PUB, USR_ADMIN, USR_PROF
 
 calificaciones = Blueprint('calificaciones', __name__)
 
 
 @calificaciones.route('/calificaciones', methods=['POST'])
+@permisos(USR_PROF)
 def creacion():
 
 	if "calificacion" not in request.json:
@@ -22,6 +24,7 @@ def creacion():
 
 
 @calificaciones.route('/calificaciones/<id>', methods=['PUT'])
+@permisos(USR_PROF)
 def modificacion(id):
 
 	obj = Calificacion.query.get_or_404(id)
@@ -35,6 +38,7 @@ def modificacion(id):
 
 
 @calificaciones.route('/calificaciones/<id>', methods=['DELETE'])
+@permisos(USR_PROF)
 def eliminacion(id):
 
 	obj = Calificacion.query.get_or_404(id)

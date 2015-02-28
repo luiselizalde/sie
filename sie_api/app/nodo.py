@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Luis Elizalde'
 
-from app import db
 from flask import request, jsonify, Blueprint
 
+from . import db
 from utils import gen_gui, ArgumentsMissing
+from permisos import permisos, USR_PUB, USR_ADMIN, USR_PROF
 
 nodos = Blueprint('nodos', __name__)
 
 
 @nodos.route('/nodos', methods=['GET'])
+@permisos(USR_PUB)
 def consulta_general():
 
 	padre = request.args.get("idPadre")
@@ -19,6 +21,7 @@ def consulta_general():
 
 
 @nodos.route('/nodos/<id>', methods=['GET'])
+@permisos(USR_PUB)
 def consulta_detalle(id):
 
 	obj = Nodo.query.get_or_404(id)
@@ -26,6 +29,7 @@ def consulta_detalle(id):
 	return jsonify(nodo=obj.todjson())
 
 @nodos.route('/nodos', methods=['POST'])
+@permisos(USR_ADMIN)
 def creacion():
 
 	if "nodo" not in request.json:
@@ -38,6 +42,7 @@ def creacion():
 
 
 @nodos.route('/nodos/<id>', methods=['PUT'])
+@permisos(USR_ADMIN)
 def modificacion(id):
 
 	obj = Nodo.query.get_or_404(id)
@@ -51,6 +56,7 @@ def modificacion(id):
 
 
 @nodos.route('/nodos/<id>', methods=['DELETE'])
+@permisos(USR_ADMIN)
 def eliminacion(id):
 
 	obj = Nodo.query.get_or_404(id)

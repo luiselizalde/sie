@@ -3,13 +3,15 @@ __author__ = 'Luis Elizalde'
 
 from flask import request, jsonify, Blueprint
 
-from app import db
+from . import db
 from utils import gen_gui, ArgumentsMissing
+from permisos import permisos, USR_PUB, USR_ADMIN, USR_PROF
 
 parametros = Blueprint('parametros', __name__)
 
 
 @parametros.route('/parametros', methods=['POST'])
+@permisos(USR_PROF)
 def creacion():
 
 	if "parametro" not in request.json:
@@ -22,6 +24,7 @@ def creacion():
 
 
 @parametros.route('/parametros/<id>', methods=['PUT'])
+@permisos(USR_PROF)
 def modificacion(id):
 
 	obj = Parametro.query.get_or_404(id)
@@ -35,6 +38,7 @@ def modificacion(id):
 
 
 @parametros.route('/parametros/<id>', methods=['DELETE'])
+@permisos(USR_PROF)
 def eliminacion(id):
 
 	obj = Parametro.query.get_or_404(id)

@@ -23,7 +23,7 @@ from calificaciones import calificaciones
 from instrumento import instrumentos
 from nodo import nodos
 from parametro import parametros
-
+from session import session
 
 app.register_blueprint(profesores)
 app.register_blueprint(detalles)
@@ -33,15 +33,13 @@ app.register_blueprint(calificaciones)
 app.register_blueprint(instrumentos)
 app.register_blueprint(nodos)
 app.register_blueprint(parametros)
+app.register_blueprint(session)
 
 
 @app.route('/')
 def hello_world():
 	return 'Hello World!'
 
-@app.route('/login', methods=['POST'])
-def login():
-	return jsonify(token=gen_gui())
 
 @app.after_request
 def after_request(response):

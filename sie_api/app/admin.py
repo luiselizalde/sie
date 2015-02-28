@@ -3,12 +3,14 @@ __author__ = 'Luis Elizalde'
 
 from flask import request, jsonify, Blueprint
 
-from app import db
+from . import db
 from utils import gen_gui, ArgumentsMissing
+from permisos import permisos, USR_PUB, USR_ADMIN, USR_PROF
 
 administradores = Blueprint('administradores', __name__)
 
 @administradores.route('/administradores', methods=['GET'])
+@permisos(USR_ADMIN)
 def consulta_general():
 
 	result = Administrador.query.all()
@@ -16,6 +18,7 @@ def consulta_general():
 	return jsonify(administradores=result)
 
 @administradores.route('/administradores', methods=['POST'])
+@permisos(USR_ADMIN)
 def creacion():
 
 	if "administrador" not in request.json:
@@ -29,6 +32,7 @@ def creacion():
 
 
 @administradores.route('/administradores/<id>', methods=['PUT'])
+@permisos(USR_ADMIN)
 def modificacion(id):
 
 	obj = Administrador.query.get_or_404(id)
@@ -42,6 +46,7 @@ def modificacion(id):
 
 
 @administradores.route('/administradores/<id>', methods=['DELETE'])
+@permisos(USR_ADMIN)
 def eliminacion(id):
 
 	obj = Administrador.query.get_or_404(id)
